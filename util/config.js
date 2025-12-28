@@ -24,77 +24,214 @@ const getPluginDir = () => {
 };
 
 /**
- * Generate a minimal default configuration file content.
- * This provides a working config with helpful comments pointing to the full example.
+ * Generate a comprehensive default configuration file content.
+ * This provides users with ALL available options fully documented.
  */
 const generateDefaultConfig = () => {
   return `{
     // ============================================================
     // OpenCode Smart Voice Notify - Configuration
     // ============================================================
-    // This file was auto-generated with minimal defaults.
-    // For ALL available options, see the full example config:
-    //   node_modules/opencode-smart-voice-notify/example.config.jsonc
-    // Or visit: https://github.com/MasuRii/opencode-smart-voice-notify#configuration
+    // 
+    // This file was auto-generated with all available options.
+    // Customize the settings below to your preference.
+    // 
+    // Sound files have been automatically copied to:
+    //   ~/.config/opencode/assets/
+    //
+    // Documentation: https://github.com/MasuRii/opencode-smart-voice-notify
+    //
     // ============================================================
 
-    // NOTIFICATION MODE
-    // 'sound-first' - Play sound immediately, TTS reminder after delay (RECOMMENDED)
-    // 'tts-first'   - Speak TTS immediately, no sound
-    // 'both'        - Play sound AND speak TTS immediately
-    // 'sound-only'  - Only play sound, no TTS at all
+    // ============================================================
+    // NOTIFICATION MODE SETTINGS (Smart Notification System)
+    // ============================================================
+    // Controls how notifications are delivered:
+    //   'sound-first' - Play sound immediately, TTS reminder after delay (RECOMMENDED)
+    //   'tts-first'   - Speak TTS immediately, no sound
+    //   'both'        - Play sound AND speak TTS immediately
+    //   'sound-only'  - Only play sound, no TTS at all
     "notificationMode": "sound-first",
+    
+    // ============================================================
+    // TTS REMINDER SETTINGS (When user doesn't respond to sound)
+    // ============================================================
+    
+    // Enable TTS reminder if user doesn't respond after sound notification
+    "enableTTSReminder": true,
+    
+    // Delay (in seconds) before TTS reminder fires
+    // Set globally or per-notification type
+    "ttsReminderDelaySeconds": 30,         // Global default
+    "idleReminderDelaySeconds": 30,        // For task completion notifications
+    "permissionReminderDelaySeconds": 20,  // For permission requests (more urgent)
+    
+    // Follow-up reminders if user STILL doesn't respond after first TTS
+    "enableFollowUpReminders": true,
+    "maxFollowUpReminders": 3,              // Max number of follow-up TTS reminders
+    "reminderBackoffMultiplier": 1.5,       // Each follow-up waits longer (30s, 45s, 67s...)
 
     // ============================================================
     // TTS ENGINE SELECTION
     // ============================================================
-    // 'elevenlabs' - Best quality (requires API key, free tier: 10k chars/month)
-    // 'edge'       - Good quality (free, requires: pip install edge-tts)
-    // 'sapi'       - Windows built-in (free, offline, robotic)
+    // 'elevenlabs' - Best quality, anime-like voices (requires API key, free tier: 10k chars/month)
+    // 'edge'       - Good quality neural voices (free, requires: pip install edge-tts)
+    // 'sapi'       - Windows built-in voices (free, offline, robotic)
     "ttsEngine": "edge",
+    
+    // Enable TTS for notifications (falls back to sound files if TTS fails)
     "enableTTS": true,
-
+    
     // ============================================================
-    // ELEVENLABS SETTINGS (Optional - for best quality)
+    // ELEVENLABS SETTINGS (Best Quality - Anime-like Voices)
     // ============================================================
-    // Get your free API key from: https://elevenlabs.io/app/settings/api-keys
-    // Uncomment and add your key to use ElevenLabs:
+    // Get your API key from: https://elevenlabs.io/app/settings/api-keys
+    // Free tier: 10,000 characters/month
+    // 
+    // To use ElevenLabs:
+    // 1. Uncomment elevenLabsApiKey and add your key
+    // 2. Change ttsEngine above to "elevenlabs"
+    //
     // "elevenLabsApiKey": "YOUR_API_KEY_HERE",
-    // "elevenLabsVoiceId": "cgSgspJ2msm6clMCkdW9",
-
+    
+    // Voice ID - Recommended cute/anime-like voices:
+    //   'cgSgspJ2msm6clMCkdW9' - Jessica (Playful, Bright, Warm) - RECOMMENDED
+    //   'FGY2WhTYpPnrIDTdsKH5' - Laura (Enthusiast, Quirky)
+    //   'jsCqWAovK2LkecY7zXl4' - Freya (Expressive, Confident)
+    //   'EXAVITQu4vr4xnSDxMaL' - Sarah (Soft, Warm)
+    // Browse more at: https://elevenlabs.io/voice-library
+    "elevenLabsVoiceId": "cgSgspJ2msm6clMCkdW9",
+    
+    // Model: 'eleven_turbo_v2_5' (fast, good), 'eleven_multilingual_v2' (highest quality)
+    "elevenLabsModel": "eleven_turbo_v2_5",
+    
+    // Voice tuning (0.0 to 1.0)
+    "elevenLabsStability": 0.5,       // Lower = more expressive, Higher = more consistent
+    "elevenLabsSimilarity": 0.75,     // How closely to match the original voice
+    "elevenLabsStyle": 0.5,           // Style exaggeration (higher = more expressive)
+    
     // ============================================================
-    // EDGE TTS SETTINGS (Default - Free Neural Voices)
+    // EDGE TTS SETTINGS (Free Neural Voices - Default Engine)
     // ============================================================
     // Requires: pip install edge-tts
+    
+    // Voice options (run 'edge-tts --list-voices' to see all):
+    //   'en-US-AnaNeural'   - Young, cute, cartoon-like (RECOMMENDED)
+    //   'en-US-JennyNeural' - Friendly, warm
+    //   'en-US-AriaNeural'  - Confident, clear
+    //   'en-GB-SoniaNeural' - British, friendly
+    //   'en-AU-NatashaNeural' - Australian, warm
     "edgeVoice": "en-US-AnaNeural",
+    
+    // Pitch adjustment: +0Hz to +100Hz (higher = more anime-like)
     "edgePitch": "+50Hz",
+    
+    // Speech rate: -50% to +100%
     "edgeRate": "+10%",
+    
+    // ============================================================
+    // SAPI SETTINGS (Windows Built-in - Last Resort Fallback)
+    // ============================================================
+    
+    // Voice (run PowerShell to list all installed voices):
+    //   Add-Type -AssemblyName System.Speech; (New-Object System.Speech.Synthesis.SpeechSynthesizer).GetInstalledVoices() | % { $_.VoiceInfo.Name }
+    //
+    // Common Windows voices:
+    //   'Microsoft Zira Desktop' - Female, US English
+    //   'Microsoft David Desktop' - Male, US English
+    //   'Microsoft Hazel Desktop' - Female, UK English
+    "sapiVoice": "Microsoft Zira Desktop",
+    
+    // Speech rate: -10 (slowest) to +10 (fastest), 0 is normal
+    "sapiRate": -1,
+    
+    // Pitch: 'x-low', 'low', 'medium', 'high', 'x-high'
+    "sapiPitch": "medium",
+    
+    // Volume: 'silent', 'x-soft', 'soft', 'medium', 'loud', 'x-loud'
+    "sapiVolume": "loud",
+    
+    // ============================================================
+    // INITIAL TTS MESSAGES (Used immediately or after sound)
+    // These are randomly selected each time for variety
+    // ============================================================
+    
+    // Messages when agent finishes work (task completion)
+    "idleTTSMessages": [
+        "All done! Your task has been completed successfully.",
+        "Hey there! I finished working on your request.",
+        "Task complete! Ready for your review whenever you are.",
+        "Good news! Everything is done and ready for you.",
+        "Finished! Let me know if you need anything else."
+    ],
+    
+    // Messages for permission requests
+    "permissionTTSMessages": [
+        "Attention please! I need your permission to continue.",
+        "Hey! Quick approval needed to proceed with the task.",
+        "Heads up! There is a permission request waiting for you.",
+        "Excuse me! I need your authorization before I can continue.",
+        "Permission required! Please review and approve when ready."
+    ],
 
     // ============================================================
-    // TTS REMINDER SETTINGS
+    // TTS REMINDER MESSAGES (More urgent - used after delay if no response)
+    // These are more personalized and urgent to get user attention
     // ============================================================
-    "enableTTSReminder": true,
-    "ttsReminderDelaySeconds": 30,
-    "permissionReminderDelaySeconds": 20,
-    "enableFollowUpReminders": true,
-    "maxFollowUpReminders": 3,
-
+    
+    // Reminder messages when agent finished but user hasn't responded
+    "idleReminderTTSMessages": [
+        "Hey, are you still there? Your task has been waiting for review.",
+        "Just a gentle reminder - I finished your request a while ago!",
+        "Hello? I completed your task. Please take a look when you can.",
+        "Still waiting for you! The work is done and ready for review.",
+        "Knock knock! Your completed task is patiently waiting for you."
+    ],
+    
+    // Reminder messages when permission still needed
+    "permissionReminderTTSMessages": [
+        "Hey! I still need your permission to continue. Please respond!",
+        "Reminder: There is a pending permission request. I cannot proceed without you.",
+        "Hello? I am waiting for your approval. This is getting urgent!",
+        "Please check your screen! I really need your permission to move forward.",
+        "Still waiting for authorization! The task is on hold until you respond."
+    ],
+    
     // ============================================================
-    // SOUND FILES (Relative to ~/.config/opencode/)
+    // SOUND FILES (For immediate notifications)
+    // These are played first before TTS reminder kicks in
     // ============================================================
-    // NOTE: You need to copy the sound files to your config directory!
-    // Copy from: node_modules/opencode-smart-voice-notify/assets/
-    // To: ~/.config/opencode/assets/
+    // Paths are relative to ~/.config/opencode/ directory
+    // Sound files are automatically copied here on first run
+    // You can replace with your own custom MP3/WAV files
+    
     "idleSound": "assets/Soft-high-tech-notification-sound-effect.mp3",
     "permissionSound": "assets/Machine-alert-beep-sound-effect.mp3",
-
+    
     // ============================================================
     // GENERAL SETTINGS
     // ============================================================
-    "enableSound": true,
-    "enableToast": true,
+    
+    // Wake monitor from sleep when notifying (Windows/macOS)
     "wakeMonitor": true,
+    
+    // Force system volume up if below threshold
     "forceVolume": true,
+    
+    // Volume threshold (0-100): force volume if current level is below this
+    "volumeThreshold": 50,
+    
+    // Show TUI toast notifications in OpenCode terminal
+    "enableToast": true,
+    
+    // Enable audio notifications (sound files and TTS)
+    "enableSound": true,
+    
+    // Consider monitor asleep after this many seconds of inactivity (Windows only)
+    "idleThresholdSeconds": 60,
+    
+    // Enable debug logging to ~/.config/opencode/smart-voice-notify-debug.log
+    // Useful for troubleshooting notification issues
     "debugLog": false
 }
 `;
